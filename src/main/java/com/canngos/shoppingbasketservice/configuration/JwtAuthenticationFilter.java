@@ -1,5 +1,6 @@
 package com.canngos.shoppingbasketservice.configuration;
 
+import com.canngos.shoppingbasketservice.exception.BusinessException;
 import com.canngos.shoppingbasketservice.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -64,10 +65,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (BusinessException e) {
             errorDetails.put("message", "Authentication Error");
-            errorDetails.put("details",e.getMessage());
+            errorDetails.put("details",e.getTransactionCode().getCode());
             response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+            mapper.writeValue(response.getWriter(), errorDetails);
+        } catch (Exception e) {
+            errorDetails.put("message", "Internal Server Error");
+            errorDetails.put("details",e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
             mapper.writeValue(response.getWriter(), errorDetails);

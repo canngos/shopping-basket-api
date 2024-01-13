@@ -1,6 +1,8 @@
 package com.canngos.shoppingbasketservice.service;
 
 import com.canngos.shoppingbasketservice.entity.Customer;
+import com.canngos.shoppingbasketservice.exception.BusinessException;
+import com.canngos.shoppingbasketservice.exception.TransactionCode;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,10 +49,10 @@ public class JwtService {
             return Optional.empty();
         } catch (ExpiredJwtException ex) {
             req.setAttribute("expired", ex.getMessage());
-            throw ex;
+            throw new BusinessException(TransactionCode.TOKEN_EXPIRED);
         } catch (Exception ex) {
             req.setAttribute("invalid", ex.getMessage());
-            throw ex;
+            throw new BusinessException(TransactionCode.TOKEN_INVALID);
         }
     }
 
