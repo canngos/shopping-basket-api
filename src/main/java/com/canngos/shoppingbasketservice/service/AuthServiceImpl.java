@@ -60,6 +60,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public DefaultMessageResponse register(RegisterRequest registerRequest) {
+        Optional<Customer> customerOptional = customerRepository.findByEmail(registerRequest.getEmail());
+        if (customerOptional.isPresent()) {
+            throw new BusinessException(TransactionCode.EMAIL_EXISTS);
+        }
+
         Customer customer = new Customer();
         BeanUtils.copyProperties(registerRequest, customer);
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
