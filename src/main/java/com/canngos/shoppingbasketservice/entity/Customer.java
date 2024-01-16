@@ -31,4 +31,8 @@ public class Customer {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "basket_id")
+    private Basket basket;
 }
