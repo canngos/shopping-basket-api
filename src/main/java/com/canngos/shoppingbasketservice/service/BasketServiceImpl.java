@@ -1,5 +1,6 @@
 package com.canngos.shoppingbasketservice.service;
 
+import com.canngos.shoppingbasketservice.dto.ItemDto;
 import com.canngos.shoppingbasketservice.entity.Basket;
 import com.canngos.shoppingbasketservice.entity.BasketItem;
 import com.canngos.shoppingbasketservice.entity.Customer;
@@ -11,13 +12,16 @@ import com.canngos.shoppingbasketservice.repository.BasketRepository;
 import com.canngos.shoppingbasketservice.repository.CustomerRepository;
 import com.canngos.shoppingbasketservice.repository.ProductRepository;
 import com.canngos.shoppingbasketservice.request.BasketRequest;
+import com.canngos.shoppingbasketservice.response.BasketResponse;
 import com.canngos.shoppingbasketservice.response.DefaultMessageResponse;
 import com.canngos.shoppingbasketservice.response.base.BaseBody;
+import com.canngos.shoppingbasketservice.response.body.BasketResponseBody;
 import com.canngos.shoppingbasketservice.response.body.DefaultMessageBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,7 +44,7 @@ public class BasketServiceImpl implements BasketService{
         }
         product.setQuantity(product.getQuantity() - quantity);
 
-        BigDecimal price = BigDecimal.valueOf(product.getPrice() * quantity);
+        BigDecimal price = product.getPrice().multiply(BigDecimal.valueOf(quantity));
 
         basket.getBasketItems().stream()
                 .filter(basketItem -> basketItem.getProduct().getId().equals(product.getId()))
@@ -70,6 +74,37 @@ public class BasketServiceImpl implements BasketService{
         defaultMessageResponse.setBody(new BaseBody<>(body));
         defaultMessageResponse.setStatus(new Status(TransactionCode.SUCCESS));
         return defaultMessageResponse;
+    }
+
+    @Override
+    public BasketResponse getBasket(String token) {
+        Customer customer = getCustomer(token);
+        Basket basket = customer.getBasket();
+
+        List<BasketItem> basketItems = basket.getBasketItems();
+
+        List<ItemDto> itemDtoList = convertBasketItemsToItemDtoList(basketItems);
+
+        BasketResponse basketResponse = new BasketResponse();
+        BasketResponseBody body = new BasketResponseBody();
+        body.setItems(itemDtoList);
+        body.setTotalPrice(basket.getTotalPrice());
+        basketResponse.setBody(new BaseBody<>(body));
+        basketResponse.setStatus(new Status(TransactionCode.SUCCESS));
+        return basketResponse;
+    }
+
+    private List<ItemDto> convertBasketItemsToItemDtoList(List<BasketItem> basketItems) {
+        return basketItems.stream()
+                .map(basketItem -> {
+                    ItemDto itemDto = new ItemDto();
+                    itemDto.setId(basketItem.getId());
+                    itemDto.setName(basketItem.getProduct().getName());
+                    itemDto.setQuantity(basketItem.getQuantity());
+                    itemDto.setPrice(basketItem.getPrice());
+                    return itemDto;
+                })
+                .toList();
     }
 
     private Product getProduct(Long productId) {
