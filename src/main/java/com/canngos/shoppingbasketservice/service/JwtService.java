@@ -74,6 +74,11 @@ public class JwtService {
         return claims.getExpiration();
     }
 
+    public String extractUsername(String token) {
+        Claims claims = parseJwtClaims(token);
+        return claims.getSubject();
+    }
+
     private Claims parseJwtClaims(String token) {
         return jwtParser.parseClaimsJws(token).getBody();
     }
