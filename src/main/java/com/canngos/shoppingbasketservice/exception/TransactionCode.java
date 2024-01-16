@@ -12,7 +12,8 @@ public enum TransactionCode {
     TOKEN_INVALID(104, "Provided token is invalid", HttpStatus.BAD_REQUEST),
     TOKEN_EXPIRED(105, "Provided token is expired", HttpStatus.BAD_REQUEST),
     PRODUCT_ALREADY_EXIST(106, "Product already exist", HttpStatus.BAD_REQUEST),
-    PRODUCT_NOT_FOUND(107, "Product not found", HttpStatus.NOT_FOUND);
+    PRODUCT_NOT_FOUND(107, "Product not found", HttpStatus.NOT_FOUND),
+    NOT_ENOUGH_STOCK(108, "Not enough stock", HttpStatus.BAD_REQUEST);
 
     private final int id;
     private final String code;
