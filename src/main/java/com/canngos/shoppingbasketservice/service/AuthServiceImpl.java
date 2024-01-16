@@ -1,5 +1,6 @@
 package com.canngos.shoppingbasketservice.service;
 
+import com.canngos.shoppingbasketservice.entity.Basket;
 import com.canngos.shoppingbasketservice.entity.Customer;
 import com.canngos.shoppingbasketservice.exception.BusinessException;
 import com.canngos.shoppingbasketservice.exception.Status;
@@ -69,6 +70,9 @@ public class AuthServiceImpl implements AuthService {
         BeanUtils.copyProperties(registerRequest, customer);
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         customer.setPassword(encodedPassword);
+        Basket basket = new Basket();
+        basket.setCustomer(customer);
+        customer.setBasket(basket);
         customerRepository.save(customer);
 
         DefaultMessageResponse response = new DefaultMessageResponse();
