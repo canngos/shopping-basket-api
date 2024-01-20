@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class JwtService {
     private final String secret;
-    private static final long TOKEN_VALIDITY = (long)60*60*1000;
+    private static final long TOKEN_VALIDITY = (long)60*24*14; // Token valid for 14 days
 
     private final JwtParser jwtParser;
 
