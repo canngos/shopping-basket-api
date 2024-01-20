@@ -2,10 +2,12 @@ package com.canngos.shoppingbasketservice.service;
 
 import com.canngos.shoppingbasketservice.entity.Basket;
 import com.canngos.shoppingbasketservice.entity.Customer;
+import com.canngos.shoppingbasketservice.entity.Session;
 import com.canngos.shoppingbasketservice.exception.BusinessException;
 import com.canngos.shoppingbasketservice.exception.Status;
 import com.canngos.shoppingbasketservice.exception.TransactionCode;
 import com.canngos.shoppingbasketservice.repository.CustomerRepository;
+import com.canngos.shoppingbasketservice.repository.SessionRepository;
 import com.canngos.shoppingbasketservice.request.LoginRequest;
 import com.canngos.shoppingbasketservice.request.RegisterRequest;
 import com.canngos.shoppingbasketservice.response.DefaultMessageResponse;
@@ -28,6 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final CustomerRepository customerRepository;
+    private final SessionRepository sessionRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -49,6 +52,12 @@ public class AuthServiceImpl implements AuthService {
         Customer customer = customerOptional.get();
         String token = jwtService.generateToken(customer);
         Date expirationDate = jwtService.extractExpiration(token);
+
+        Session session = new Session();
+        session.setJwtToken(token);
+        session.setEmail(email);
+        session.setTokenExpiredDate(expirationDate);
+        sessionRepository.save(session);
 
         LoginResponse loginResponse = new LoginResponse();
         LoginResponseBody body = new LoginResponseBody();
