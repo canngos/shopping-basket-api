@@ -10,4 +10,5 @@ public interface BasketService {
     BasketResponse getBasket(String token);
     DefaultMessageResponse clearBasket(String token);
     DefaultMessageResponse removeItem(String token, Long itemId);
+    DefaultMessageResponse updateItemQuantity(String token, Long itemId, Integer quantity);
 }

@@ -121,15 +121,7 @@ public class BasketServiceImpl implements BasketService{
         Customer customer = getCustomer(token);
         Basket basket = customer.getBasket();
 
-        Optional<BasketItem> basketItemOptional = basket.getBasketItems().stream()
-                .filter(basketItem -> basketItem.getId().equals(itemId))
-                .findFirst();
-
-        if (basketItemOptional.isEmpty()) {
-            throw new BusinessException(TransactionCode.BASKET_ITEM_NOT_FOUND);
-        }
-
-        BasketItem basketItem = basketItemOptional.get();
+        BasketItem basketItem = checkBasketItemExist(basket, itemId);
         Product product = basketItem.getProduct();
         product.setQuantity(product.getQuantity() + basketItem.getQuantity());
         productRepository.save(product);
@@ -143,6 +135,47 @@ public class BasketServiceImpl implements BasketService{
         defaultMessageResponse.setBody(new BaseBody<>(body));
         defaultMessageResponse.setStatus(new Status(TransactionCode.SUCCESS));
         return defaultMessageResponse;
+    }
+
+    @Override
+    public DefaultMessageResponse updateItemQuantity(String token, Long itemId, Integer quantity) {
+        Customer customer = getCustomer(token);
+        Basket basket = customer.getBasket();
+
+        BasketItem basketItem = checkBasketItemExist(basket, itemId);
+        Product product = basketItem.getProduct();
+
+        if (quantity > product.getQuantity() + basketItem.getQuantity()) {
+            throw new BusinessException(TransactionCode.NOT_ENOUGH_STOCK);
+        }
+
+        BigDecimal price = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+
+        product.setQuantity(product.getQuantity() - (quantity - basketItem.getQuantity()));
+        productRepository.save(product);
+
+        basket.setTotalPrice(basket.getTotalPrice().subtract(basketItem.getPrice()).add(price));
+        basketItem.setQuantity(quantity);
+        basketItem.setPrice(price);
+        basketRepository.save(basket);
+
+        DefaultMessageResponse defaultMessageResponse = new DefaultMessageResponse();
+        DefaultMessageBody body = new DefaultMessageBody("Item quantity updated successfully");
+        defaultMessageResponse.setBody(new BaseBody<>(body));
+        defaultMessageResponse.setStatus(new Status(TransactionCode.SUCCESS));
+        return defaultMessageResponse;
+    }
+
+    private BasketItem checkBasketItemExist(Basket basket, Long itemId) {
+        Optional<BasketItem> basketItemOptional = basket.getBasketItems().stream()
+                .filter(basketItem -> basketItem.getId().equals(itemId))
+                .findFirst();
+
+        if (basketItemOptional.isEmpty()) {
+            throw new BusinessException(TransactionCode.BASKET_ITEM_NOT_FOUND);
+        }
+
+        return basketItemOptional.get();
     }
 
     private List<ItemDto> convertBasketItemsToItemDtoList(List<BasketItem> basketItems) {
