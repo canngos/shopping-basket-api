@@ -116,6 +116,35 @@ public class BasketServiceImpl implements BasketService{
         return defaultMessageResponse;
     }
 
+    @Override
+    public DefaultMessageResponse removeItem(String token, Long itemId) {
+        Customer customer = getCustomer(token);
+        Basket basket = customer.getBasket();
+
+        Optional<BasketItem> basketItemOptional = basket.getBasketItems().stream()
+                .filter(basketItem -> basketItem.getId().equals(itemId))
+                .findFirst();
+
+        if (basketItemOptional.isEmpty()) {
+            throw new BusinessException(TransactionCode.BASKET_ITEM_NOT_FOUND);
+        }
+
+        BasketItem basketItem = basketItemOptional.get();
+        Product product = basketItem.getProduct();
+        product.setQuantity(product.getQuantity() + basketItem.getQuantity());
+        productRepository.save(product);
+
+        basket.getBasketItems().remove(basketItem);
+        basket.setTotalPrice(basket.getTotalPrice().subtract(basketItem.getPrice()));
+        basketRepository.save(basket);
+
+        DefaultMessageResponse defaultMessageResponse = new DefaultMessageResponse();
+        DefaultMessageBody body = new DefaultMessageBody("Item deleted successfully");
+        defaultMessageResponse.setBody(new BaseBody<>(body));
+        defaultMessageResponse.setStatus(new Status(TransactionCode.SUCCESS));
+        return defaultMessageResponse;
+    }
+
     private List<ItemDto> convertBasketItemsToItemDtoList(List<BasketItem> basketItems) {
         return basketItems.stream()
                 .map(basketItem -> {

@@ -9,4 +9,5 @@ public interface BasketService {
     DefaultMessageResponse addToBasket(String token, BasketRequest basketRequest);
     BasketResponse getBasket(String token);
     DefaultMessageResponse clearBasket(String token);
+    DefaultMessageResponse removeItem(String token, Long itemId);
 }
