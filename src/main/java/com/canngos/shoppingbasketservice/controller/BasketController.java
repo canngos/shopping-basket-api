@@ -28,4 +28,9 @@ public class BasketController {
     public ResponseEntity<BasketResponse> getBasket(@Valid @RequestHeader(AUTHORIZATION) @NotBlank String token) {
         return new ResponseEntity<>(basketService.getBasket(token.substring(7)), HttpStatus.OK);
     }
+
+    @DeleteMapping("/clear")
+    public ResponseEntity<DefaultMessageResponse> clearBasket(@Valid @RequestHeader(AUTHORIZATION) @NotBlank String token) {
+        return new ResponseEntity<>(basketService.clearBasket(token.substring(7)), HttpStatus.OK);
+    }
 }
