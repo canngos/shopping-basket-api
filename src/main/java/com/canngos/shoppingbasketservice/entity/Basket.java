@@ -25,6 +25,6 @@ public class Basket {
     private Customer customer;
 
     private BigDecimal totalPrice = BigDecimal.ZERO;
-    @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BasketItem> basketItems = new ArrayList<>();
 }

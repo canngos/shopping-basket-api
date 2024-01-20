@@ -94,6 +94,28 @@ public class BasketServiceImpl implements BasketService{
         return basketResponse;
     }
 
+    @Override
+    public DefaultMessageResponse clearBasket(String token) {
+        Customer customer = getCustomer(token);
+        Basket basket = customer.getBasket();
+
+        basket.getBasketItems().forEach(basketItem -> {
+            Product product = basketItem.getProduct();
+            product.setQuantity(product.getQuantity() + basketItem.getQuantity());
+            productRepository.save(product);
+        });
+
+        basket.getBasketItems().clear();
+        basket.setTotalPrice(BigDecimal.ZERO);
+        basketRepository.save(basket);
+
+        DefaultMessageResponse defaultMessageResponse = new DefaultMessageResponse();
+        DefaultMessageBody body = new DefaultMessageBody("Basket cleared successfully");
+        defaultMessageResponse.setBody(new BaseBody<>(body));
+        defaultMessageResponse.setStatus(new Status(TransactionCode.SUCCESS));
+        return defaultMessageResponse;
+    }
+
     private List<ItemDto> convertBasketItemsToItemDtoList(List<BasketItem> basketItems) {
         return basketItems.stream()
                 .map(basketItem -> {
