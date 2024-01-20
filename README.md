@@ -1,6 +1,42 @@
 # Shopping Basket Service
 The Shopping Basket Service is a comprehensive REST API developed in Java using the Spring framework. This project, culminating from the Techcarieer's Backend From Start To Finish Bootcamp, serves as a robust solution for managing shopping baskets, products, and user authentication within an e-commerce platform. The core functionality of the service revolves around three main components: Authentication, Product Management, and Basket Operations. It employs industry-standard JWT token-based authentication via Spring Security, ensuring secure and seamless user interactions with the platform.
 
+## Getting Started
+
+1. Clone the Shopping Basket Service repository from GitHub.
+
+2. Open the project with your preferred IDE.
+
+3. Configure the necessary database. (default Postgres)
+
+4. Update the application.properties file with the database credentials.
+
+5. Run the application using Maven or your preferred IDE. (Initial port is 8080. You can change it from application.properties)
+
+## Maven Commands
+To build, test, and run the Shopping Basket Service, you can use the following Maven commands:
+
+### Clean And Install
+To clean the build artifacts and rebuild the project, run:
+
+`./mvnw clean install`
+
+> The built JAR file will be located in the target directory.
+
+### Test
+To run the tests for the Shopping Basket Service, use:
+
+`./mvnw test`
+
+> This command will execute all the unit tests in the project. The test results will be displayed in the console, indicating which tests passed and which ones failed.
+
+### Run 
+To run the Shopping Basket Service locally, use the following command:
+
+`./mvnw spring-boot:run`
+
+> This will start the service, and you can access the APIs at http://localhost:8080.
+
 ## APIs
 ### Auth API
 
@@ -103,42 +139,6 @@ The Shopping Basket Service is a comprehensive REST API developed in Java using 
 ## Database UML Diagram
 
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
-## Getting Started
-
-1. Clone the Shopping Basket Service repository from GitHub.
-
-2. Open the project with your preferred IDE.
-
-3. Configure the necessary database. (default Postgres)
-
-4. Update the application.properties file with the database credentials.
-
-5. Run the application using Maven or your preferred IDE. (Initial port is 8080. You can change it from application.properties)
-
-## Maven Commands
-To build, test, and run the Shopping Basket Service, you can use the following Maven commands:
-
-### Clean And Install
-To clean the build artifacts and rebuild the project, run:
-
-`./mvnw clean install`
-
-> The built JAR file will be located in the target directory.
-
-### Test
-To run the tests for the Shopping Basket Service, use:
-
-`./mvnw test`
-
-> This command will execute all the unit tests in the project. The test results will be displayed in the console, indicating which tests passed and which ones failed.
-
-### Run 
-To run the Shopping Basket Service locally, use the following command:
-
-`./mvnw spring-boot:run`
-
-> This will start the service, and you can access the APIs at http://localhost:8080.
 
 ## POSTMAN 
 ![App Screenshot](https://github.com/canngos/shopping-basket-api/assets/79870696/88cc3416-c3c9-437a-809a-d652d1bf8cd8)
