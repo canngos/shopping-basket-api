@@ -38,4 +38,9 @@ public class BasketController {
     public ResponseEntity<DefaultMessageResponse> removeItem(@Valid @RequestHeader(AUTHORIZATION) @NotBlank String token, @PathVariable Long itemId) {
         return new ResponseEntity<>(basketService.removeItem(token.substring(7), itemId), HttpStatus.OK);
     }
+
+    @PutMapping("/item/{itemId}/quantity/{quantity}")
+    public ResponseEntity<DefaultMessageResponse> updateItemQuantity(@Valid @RequestHeader(AUTHORIZATION) @NotBlank String token, @PathVariable Long itemId, @PathVariable Integer quantity) {
+        return new ResponseEntity<>(basketService.updateItemQuantity(token.substring(7), itemId, quantity), HttpStatus.OK);
+    }
 }
