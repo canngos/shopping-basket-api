@@ -7,13 +7,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class ProductRequest {
     @NotBlank(message = "Name field cannot be empty")
     private String name;
     @NotNull(message = "Price field cannot be empty")
-    private Double price;
+    private BigDecimal price;
     private String description;
     private ProductType type;
     @Min(value = 1, message = "Quantity field cannot be less than 1")

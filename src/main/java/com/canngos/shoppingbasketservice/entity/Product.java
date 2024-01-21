@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,4 +25,7 @@ public class Product {
     private ProductType type = ProductType.OTHER;
     @Column(nullable = false)
     private Integer quantity;
+
+    @OneToMany(mappedBy = "product", orphanRemoval = true)
+    private List<BasketItem> items;
 }

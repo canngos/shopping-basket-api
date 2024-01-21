@@ -1,8 +1,8 @@
 package com.canngos.shoppingbasketservice.controller;
 
-import com.canngos.shoppingbasketservice.entity.Product;
 import com.canngos.shoppingbasketservice.request.ProductRequest;
 import com.canngos.shoppingbasketservice.response.DefaultMessageResponse;
+import com.canngos.shoppingbasketservice.response.ProductDetailResponse;
 import com.canngos.shoppingbasketservice.response.ProductResponse;
 import com.canngos.shoppingbasketservice.service.ProductService;
 import jakarta.validation.Valid;
@@ -25,7 +25,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
+    public ResponseEntity<ProductDetailResponse> getProduct(@PathVariable Long id) {
         return new ResponseEntity<>(productService.getProduct(id), HttpStatus.OK);
     }
 

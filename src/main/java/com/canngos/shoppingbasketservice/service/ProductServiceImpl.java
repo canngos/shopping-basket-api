@@ -1,5 +1,6 @@
 package com.canngos.shoppingbasketservice.service;
 
+import com.canngos.shoppingbasketservice.dto.ProductDto;
 import com.canngos.shoppingbasketservice.entity.Product;
 import com.canngos.shoppingbasketservice.exception.BusinessException;
 import com.canngos.shoppingbasketservice.exception.Status;
@@ -7,9 +8,11 @@ import com.canngos.shoppingbasketservice.exception.TransactionCode;
 import com.canngos.shoppingbasketservice.repository.ProductRepository;
 import com.canngos.shoppingbasketservice.request.ProductRequest;
 import com.canngos.shoppingbasketservice.response.DefaultMessageResponse;
+import com.canngos.shoppingbasketservice.response.ProductDetailResponse;
 import com.canngos.shoppingbasketservice.response.ProductResponse;
 import com.canngos.shoppingbasketservice.response.base.BaseBody;
 import com.canngos.shoppingbasketservice.response.body.DefaultMessageBody;
+import com.canngos.shoppingbasketservice.response.body.ProductDetailBody;
 import com.canngos.shoppingbasketservice.response.body.ProductResponseBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -28,21 +31,32 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse getProducts() {
         List<Product> products = productRepository.findAll();
 
+        List<ProductDto> productDtoList = convertProductListToDto(products);
+
         ProductResponse productResponse = new ProductResponse();
         ProductResponseBody body = new ProductResponseBody();
-        body.setProducts(products);
+        body.setProducts(productDtoList);
         productResponse.setBody(new BaseBody<>(body));
         productResponse.setStatus(new Status(TransactionCode.SUCCESS));
         return productResponse;
     }
 
     @Override
-    public Product getProduct(Long id) {
+    public ProductDetailResponse getProduct(Long id) {
         Optional<Product> productOptional = productRepository.findById(id);
         if (productOptional.isEmpty()) {
             throw new BusinessException(TransactionCode.PRODUCT_NOT_FOUND);
         }
-        return productOptional.get();
+        Product product = productOptional.get();
+        ProductDto productDto = new ProductDto();
+        BeanUtils.copyProperties(product, productDto);
+
+        ProductDetailResponse productDetailResponse = new ProductDetailResponse();
+        ProductDetailBody body = new ProductDetailBody();
+        body.setProduct(productDto);
+        productDetailResponse.setBody(new BaseBody<>(body));
+        productDetailResponse.setStatus(new Status(TransactionCode.SUCCESS));
+        return productDetailResponse;
     }
 
     @Override
@@ -92,5 +106,15 @@ public class ProductServiceImpl implements ProductService {
         defaultMessageResponse.setBody(new BaseBody<>(body));
         defaultMessageResponse.setStatus(new Status(TransactionCode.SUCCESS));
         return defaultMessageResponse;
+    }
+
+    private List<ProductDto> convertProductListToDto(List<Product> products) {
+        return products.stream()
+                .map(product -> {
+                    ProductDto productDto = new ProductDto();
+                    BeanUtils.copyProperties(product, productDto);
+                    return productDto;
+                })
+                .toList();
     }
 }

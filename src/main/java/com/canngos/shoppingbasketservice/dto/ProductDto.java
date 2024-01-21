@@ -1,16 +1,20 @@
 package com.canngos.shoppingbasketservice.dto;
 
-import lombok.Builder;
+import com.canngos.shoppingbasketservice.entity.ProductType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
 public class ProductDto {
+    private Long id;
     private String name;
-    private Double price;
+    private BigDecimal price;
     private String description;
-    private String type;
+    private ProductType type;
     private int quantity;
 }
